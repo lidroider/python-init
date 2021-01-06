@@ -18,7 +18,7 @@ pipenv shell
 
 Step 2: Run `pipenv --py` to get python path and config your editor
 
-Ex: VS Code append it into `.vscode/settings.json` like
+Ex: Append it into `.vscode/settings.json` like
 
 ```
 {
@@ -28,9 +28,25 @@ Ex: VS Code append it into `.vscode/settings.json` like
 }
 ```
 
+Step 3: Update pylint path
+
+Ex: Append project absolute path to `.vscode/settings.json` like
+
+```
+{
+    "python.linting.enabled": true,
+    "python.formatting.provider": "yapf",
+    "python.pythonPath": "/home/cec/.local/share/virtualenvs/capturer-n17q30yo/bin/python",
+    "python.linting.pylintArgs": [
+        "--init-hook",
+        "import sys; sys.path.append('/absolute/path/of/project')"
+    ]
+}
+```
+
 Remember to DO NOT commit `.vscode/settings.json` about changing of python path config
 
-Step 3: Run command to register git hook auto check format code with yapf
+Step 4: Run command to register git hook auto check format code with yapf
 
 ```bash
 pre-commit install
