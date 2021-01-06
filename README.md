@@ -12,7 +12,7 @@ Step 1: Run in terminal
 
 ```bash
 pip3 install -U pipenv
-pipenv sync
+pipenv sync --dev
 pipenv shell
 ```
 
@@ -39,6 +39,6 @@ pre-commit install
 
 ## How to build
 ```bash
-pipenv run pip freeze > requirements.txt
+pipenv lock --requirements > requirements.txt
 docker build .
 ```
