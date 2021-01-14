@@ -1,22 +1,27 @@
 import os
 import sys
+
 from loguru import logger
 
+import const
+
 DEFAULT_FORMAT = "{time:HH:MM:ss.SSS} | {level} | {process} - {thread} | {file} | {function} | {message}"
-TRACE_FORMAT = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> \
+INFO_FORMAT = "<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> \
 | <level>{level: <8}</level> | <white>{process} - {thread}</white> \
 | <cyan>{file}</cyan>:<cyan>{function}</cyan>:<cyan>{line}</cyan> \
 - <level>{message}</level>"
 
-DEFAULT_PREFIX_PATH = "/logs"
-
-
-def __prefix_daily_log_path():
-    return os.path.join(DEFAULT_PREFIX_PATH, "{time:YYYY-MM-DD}")
+DEFAULT_PREFIX_PATH = const.DEFAULT_LOG_PATH
 
 
 def config():
-    error_log_path = os.path.join(__prefix_daily_log_path(), "error.log")
+    error_log_path = os.path.join(
+        DEFAULT_PREFIX_PATH, "error__{time:YYYY-MM-DD}.log"
+    )
+    all_log_path = os.path.join(
+        DEFAULT_PREFIX_PATH, "all__{time:YYYY-MM-DD}.log"
+    )
+
     error_handler = {
         "sink": error_log_path,
         "level": "ERROR",
@@ -28,16 +33,27 @@ def config():
         "retention": "1 months",
     }
 
-    trace_handler = {
-        "sink": sys.stderr,
+    all_handler = {
+        "sink": all_log_path,
         "level": "TRACE",
         "backtrace": True,
         "diagnose": True,
         "enqueue": True,
-        "format": TRACE_FORMAT,
+        "format": DEFAULT_FORMAT,
+        "rotation": "1 days",
+        "retention": "1 weeks",
     }
 
-    config_log = {"handlers": [error_handler, trace_handler]}
+    info_handler = {
+        "sink": sys.stderr,
+        "level": "INFO",
+        "backtrace": True,
+        "diagnose": True,
+        "enqueue": True,
+        "format": INFO_FORMAT,
+    }
+
+    config_log = {"handlers": [error_handler, all_handler, info_handler]}
     logger.remove()
     logger.configure(**config_log)
 
@@ -49,10 +65,12 @@ def create_log(
     def check_match_logname(record) -> bool:
         if "logname" in record["extra"]:
             return record["extra"]["logname"] == logname
-        else:
-            return False
 
-    new_log_path = os.path.join(__prefix_daily_log_path(), f"{logname}.log")
+        return False
+
+    new_log_path = os.path.join(
+        DEFAULT_PREFIX_PATH, logname, f"{logname}__{{time:YYYY-MM-DD}}.log"
+    )
 
     logger.add(
         sink=new_log_path,
