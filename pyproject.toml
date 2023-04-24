@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "python-init"
+version = "0.0.1"
+description = "Python init project"
+authors = ["Trong Nguyen <lidroider@gmail.com>"]
+readme = "README.md"
+packages = [{include = "python-init"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+loguru = "^0.7.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pylint = "^2.17.2"
+yapf = "^0.32.0"
+pre-commit = "^3.2.2"
+rope = "^1.7.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
